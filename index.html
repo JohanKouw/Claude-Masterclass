@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koolmees Geluiden — Parus major</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a3a1a 0%, #2d5a27 40%, #1a4a2e 100%);
+            min-height: 100vh;
+            color: #e8f0e8;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #c8e6a0;
+            margin-bottom: 0.3rem;
+        }
+
+        header .subtitle {
+            font-size: 1rem;
+            color: #8bab6e;
+            font-style: italic;
+        }
+
+        .bird-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .info-bar {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #a0c080;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(106,191,75,0.1);
+            border-radius: 8px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            color: #6abf4b;
+        }
+
+        .stat strong { color: #c8e6a0; }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            color: #9ab88a;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: #c8e6a0;
+        }
+
+        .filter-btn.active {
+            background: rgba(106,191,75,0.2);
+            border-color: #6abf4b;
+            color: #c8e6a0;
+        }
+
+        .category-heading {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #8bab6e;
+            margin: 1.8rem 0 0.8rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-heading .cat-icon { font-size: 1.2rem; }
+        .category-heading .cat-count {
+            font-size: 0.75rem;
+            color: #6a8a5a;
+            font-weight: 400;
+        }
+
+        .sounds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .sound-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.2rem;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sound-card:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(200,230,160,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .sound-card.playing {
+            border-color: #c8e6a0;
+            box-shadow: 0 0 20px rgba(200,230,160,0.15);
+        }
+
+        .sound-card.playing::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6abf4b, #c8e6a0, #6abf4b);
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        .sound-card.hidden { display: none; }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .card-icon {
+            font-size: 1.4rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(200,230,160,0.1);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #d4eab0;
+        }
+
+        .card-dutch {
+            font-size: 0.75rem;
+            color: #8bab6e;
+            margin-top: 1px;
+        }
+
+        .card-description {
+            font-size: 0.8rem;
+            color: #9ab88a;
+            line-height: 1.45;
+            margin-bottom: 0.8rem;
+        }
+
+        .card-phonetic {
+            display: inline-block;
+            background: rgba(200,230,160,0.1);
+            border-radius: 6px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.8rem;
+            color: #c8e6a0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #6abf4b;
+            background: rgba(106,191,75,0.15);
+            color: #6abf4b;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            background: rgba(106,191,75,0.3);
+            transform: scale(1.1);
+        }
+
+        .play-btn.active {
+            background: #6abf4b;
+            color: #1a3a1a;
+        }
+
+        .speed-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #6abf4b;
+            cursor: pointer;
+        }
+
+        .speed-label {
+            font-size: 0.7rem;
+            color: #8bab6e;
+            min-width: 36px;
+            text-align: right;
+        }
+
+        .visualizer-container {
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .viz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .visualizer-label {
+            font-size: 0.8rem;
+            color: #6a8a5a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .viz-toggle {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .viz-toggle button {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            color: #8bab6e;
+            cursor: pointer;
+        }
+
+        .viz-toggle button.active {
+            background: rgba(106,191,75,0.2);
+            border-color: #6abf4b;
+            color: #c8e6a0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 120px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #5a7a4a;
+            line-height: 1.6;
+        }
+
+        footer a { color: #6abf4b; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="bird-icon">🐦</span>
+            <h1>Koolmees Geluiden</h1>
+            <div class="subtitle">Parus major — Volledig Vocaal Repertoire</div>
+        </header>
+
+        <div class="info-bar">
+            De koolmees (<em>Parus major</em>) heeft een van de rijkste vocale repertoires van alle zangvogels,
+            met meer dan 40 verschillende geluidstypes (Gompertz, 1961). Hieronder vind je 25 gesynthetiseerde
+            benaderingen van hun belangrijkste roepen, zangen en mechanische geluiden, georganiseerd per categorie.
+            <div class="stats">
+                <span class="stat"><strong>25</strong> geluiden</span>
+                <span class="stat"><strong>6</strong> categorieën</span>
+                <span class="stat"><strong>~3-8 kHz</strong> frequentiebereik</span>
+            </div>
+        </div>
+
+        <div class="filter-bar" id="filterBar"></div>
+
+        <div id="soundsContainer"></div>
+
+        <div class="visualizer-container">
+            <div class="viz-header">
+                <div class="visualizer-label">Audiovisualisatie</div>
+                <div class="viz-toggle">
+                    <button class="active" data-viz="waveform">Golfvorm</button>
+                    <button data-viz="frequency">Frequentie</button>
+                </div>
+            </div>
+            <canvas id="visualizer"></canvas>
+        </div>
+
+        <footer>
+            Gebouwd met Web Audio API — Gesynthetiseerde benaderingen van koolmeesgeluiden<br>
+            Bronnen: Gompertz (1961), Hinde (1952), Carlson et al. (2017), Randler et al. (2019)
+        </footer>
+    </div>
+
+    <script>
+    // ── Audio Context ──
+    let audioCtx = null;
+    let analyser = null;
+    let activeTimeout = null;
+    let activeSources = [];
+    let vizMode = 'waveform';
+
+    function getAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.8;
+            analyser.connect(audioCtx.destination);
+            startVisualizer();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+    }
+
+    // ── Categories ──
+    const categories = [
+        { id: 'zang', name: 'Zang', icon: '🎵', description: 'Territorium & balts' },
+        { id: 'alarm', name: 'Alarm & Waarschuwing', icon: '⚠️', description: 'Gevaar & mobbing' },
+        { id: 'contact', name: 'Contact & Sociaal', icon: '💬', description: 'Groepscommunicatie' },
+        { id: 'nest', name: 'Nest & Broeden', icon: '🪺', description: 'Nestverdediging & jongen' },
+        { id: 'voedsel', name: 'Voedsel', icon: '🐛', description: 'Foerageren & rekrutering' },
+        { id: 'mechanisch', name: 'Mechanische Geluiden', icon: '🔧', description: 'Niet-vocale productie' }
+    ];
+
+    // ── Sound definitions ──
+    const sounds = [
+        // ═══ ZANG ═══
+        {
+            id: 'teacher', category: 'zang',
+            title: 'Teacher-Teacher Zang',
+            dutch: 'Klassieke territoriumzang',
+            icon: '🎵',
+            phonetic: 'tie-tsjuu tie-tsjuu',
+            description: 'De iconische tweelettergrepige zang. Elke koolmees heeft 1-6 zangvarianten. Wordt vooral van januari t/m juni gehoord vanaf hoge zangposten.',
+            play: (ctx, dest, speed) => playTeacher(ctx, dest, speed)
+        },
+        {
+            id: 'song_complex', category: 'zang',
+            title: 'Complexe Drielettergrepige Zang',
+            dutch: 'Uitgebreide territoriumvariant',
+            icon: '🎶',
+            phonetic: 'ti-ta-tuu ti-ta-tuu',
+            description: 'Een drielettergrepige variant. Mannelijke koolmezen zingen verschillende liedjes op verschillende plekken in hun territorium, wat de indruk wekt van meerdere verdedigers.',
+            play: (ctx, dest, speed) => playSongComplex(ctx, dest, speed)
+        },
+        {
+            id: 'song_seesaw', category: 'zang',
+            title: 'Zaagzang',
+            dutch: 'Zaagslijpend motief',
+            icon: '🪚',
+            phonetic: 'zi-zi-zi-bèh zi-zi-zi-bèh',
+            description: 'Een variant die lijkt op het slijpen van een zaag. Snelle hoge noten gevolgd door een lagere afsluitnoot. Een van de meest herkenbare zangtypen.',
+            play: (ctx, dest, speed) => playSawSong(ctx, dest, speed)
+        },
+        {
+            id: 'song_pietoe', category: 'zang',
+            title: 'Pie-toe Zang',
+            dutch: 'Tweenootvariant',
+            icon: '🎼',
+            phonetic: 'pie-toe pie-toe pie-toe',
+            description: 'Een heldere, fluitende tweenootvariant met stijgende-dalende toonhoogte. Vaak gehoord in stedelijke gebieden waar koolmezen hogere frequenties kiezen om verkeersgeluid te overbruggen.',
+            play: (ctx, dest, speed) => playPietoe(ctx, dest, speed)
+        },
+        {
+            id: 'subsong', category: 'zang',
+            title: 'Onderzang',
+            dutch: 'Fluisterzang / oefenzang',
+            icon: '🤫',
+            phonetic: '(zacht gebrabbel)',
+            description: 'Zeer zachte, onregelmatige warrelzang, alleen hoorbaar van dichtbij. Wordt gezongen door jonge vogels die hun zang oefenen, en door beide geslachten van winter tot broedtijd.',
+            play: (ctx, dest, speed) => playSubsong(ctx, dest, speed)
+        },
+        {
+            id: 'dawn', category: 'zang',
+            title: 'Ochtendkoorzang',
+            dutch: 'Dawn chorus',
+            icon: '🌅',
+            phonetic: 'tie-tsjuu-tie-tsjuu-tie-tsjuu (snel)',
+            description: 'Dezelfde motieven als de territoriumzang maar op veel hogere snelheid en intensiteit. Piekt 20-35 minuten na zonsopgang en duurt 35-45 minuten.',
+            play: (ctx, dest, speed) => playDawnChorus(ctx, dest, speed)
+        },
+        {
+            id: 'courtship', category: 'zang',
+            title: 'Baltszang',
+            dutch: 'Baltsroep / paarroep',
+            icon: '💕',
+            phonetic: 'ziddle zeeeeee / zrrree zrrree',
+            description: 'Lage warbelende zang tijdens de balts. Het mannetje zingt "ziddle zeeeeee" en het vrouwtje antwoordt met sneller "zrrree zrrree". Een duetachtige uitwisseling.',
+            play: (ctx, dest, speed) => playCourtship(ctx, dest, speed)
+        },
+
+        // ═══ ALARM & WAARSCHUWING ═══
+        {
+            id: 'alarm', category: 'alarm',
+            title: 'Tink-Alarmroep',
+            dutch: 'Algemene waarschuwing',
+            icon: '🔔',
+            phonetic: 'tink tink tink tink',
+            description: 'Scherpe, metallieke herhaalde roep bij gevaar. Het tempo en de intensiteit coderen het dreigingsniveau. Andere vogelsoorten reageren ook op deze roep.',
+            play: (ctx, dest, speed) => playAlarm(ctx, dest, speed)
+        },
+        {
+            id: 'seet', category: 'alarm',
+            title: 'Seet-roep',
+            dutch: 'Roofvogelalarm',
+            icon: '🦅',
+            phonetic: 'siiiiiiiit',
+            description: 'Zeer hoge, dunne fluittoon als waarschuwing voor roofvogels. Het geluid is moeilijk te lokaliseren, waardoor de zender veilig blijft. Wordt door veel vogelsoorten begrepen.',
+            play: (ctx, dest, speed) => playSeet(ctx, dest, speed)
+        },
+        {
+            id: 'mobbing', category: 'alarm',
+            title: 'Mobbing / D-roep',
+            dutch: 'Mobbingroep bij roofdieren',
+            icon: '😡',
+            phonetic: 'chich-ich-ich-ich-ich',
+            description: 'De primaire mobbingroep, bestaande uit 83-94% van alle roepen bij roofdiercontact. Het aantal D-elementen codeert het dreigingsniveau: meer elementen = gevaarlijker roofdier.',
+            play: (ctx, dest, speed) => playMobbing(ctx, dest, speed)
+        },
+        {
+            id: 'churr', category: 'alarm',
+            title: 'Tsjurr / Ratelroep',
+            dutch: 'Oplopende ratel bij agitatie',
+            icon: '😠',
+            phonetic: 'tsjurr-r-r-r-rihihi',
+            description: 'Een droge, stijgende ratel als inleiding tot zware mobbing. Lichte versies dienen als partnercontact; langere, harsere versies bij grote agitatie. Intensiteit is een maat voor dreigingsniveau.',
+            play: (ctx, dest, speed) => playChurr(ctx, dest, speed)
+        },
+        {
+            id: 'scold', category: 'alarm',
+            title: 'Scheldroep',
+            dutch: 'Agressieve confrontatieroep',
+            icon: '😤',
+            phonetic: 'tsji-tsji-dèè-dèè',
+            description: 'Luidruchtige, boze roep bij directe confrontatie met indringers of roofdieren. Wordt vaak gecombineerd met dreigende houdingen en vleugelbewegingen.',
+            play: (ctx, dest, speed) => playScold(ctx, dest, speed)
+        },
+        {
+            id: 'peetink', category: 'alarm',
+            title: 'Pee-tink Roep',
+            dutch: 'Inleidende alarmroep',
+            icon: '📢',
+            phonetic: 'pee-tink pee-tink',
+            description: 'Samengestelde inleidende roep die voorafgaat aan mobbingreeksen. De dunne "pee" waarschuwt, de metallieke "tink" recruteert andere vogels voor mobbing.',
+            play: (ctx, dest, speed) => playPeetink(ctx, dest, speed)
+        },
+        {
+            id: 'jar', category: 'alarm',
+            title: 'Jar / Ratelroep',
+            dutch: 'Specifiek grondpredator-alarm',
+            icon: '🦉',
+            phonetic: 'jar jar jar',
+            description: 'Zeldzame, harsere ratelroep alleen waargenomen bij grondpredatoren (bijv. bosuil). Bij de verwante Japanse mees dient deze roep als referentieel signaal specifiek voor slangen.',
+            play: (ctx, dest, speed) => playJar(ctx, dest, speed)
+        },
+        {
+            id: 'tseetui', category: 'alarm',
+            title: 'Tsee-tsui Roep',
+            dutch: 'Angst-/agressieroep',
+            icon: '😰',
+            phonetic: 'tsee-tsui tsee-tsui',
+            description: 'Dunne, scherpe tweenootroep bij angst en agressie, zoals dichtbij-territorialdisputen of verstoring bij het nest.',
+            play: (ctx, dest, speed) => plasTseeTsui(ctx, dest, speed)
+        },
+
+        // ═══ CONTACT & SOCIAAL ═══
+        {
+            id: 'contact', category: 'contact',
+            title: 'Si-si Contactroep',
+            dutch: 'Groepscontact bij foerageren',
+            icon: '💬',
+            phonetic: 'si-si-si tsee',
+            description: 'Zachte, hoge tonen om contact te houden met groepsgenoten tijdens foerageren. Vooral in de herfst en winter te horen in gemengde mezengroepen.',
+            play: (ctx, dest, speed) => playContact(ctx, dest, speed)
+        },
+        {
+            id: 'flight', category: 'contact',
+            title: 'Vluchtroep',
+            dutch: 'Contactroep tijdens vlucht',
+            icon: '🪶',
+            phonetic: 'tsit tsit tsit',
+            description: 'Korte, zachte roepjes tijdens de vlucht. Helpt de groep bij elkaar te blijven wanneer vogels tussen foerageerplekken vliegen.',
+            play: (ctx, dest, speed) => playFlight(ctx, dest, speed)
+        },
+        {
+            id: 'pit', category: 'contact',
+            title: 'Pit / Spick Contactnoten',
+            dutch: 'Korte contactroepjes',
+            icon: '🗣️',
+            phonetic: 'pit pit / spick spick',
+            description: 'Zachte, korte enkelvoudige noten als contactroep bij paren of groepen. Worden het hele jaar door gegeven en dienen ook als inleidende noten voor langere roepreeksen.',
+            play: (ctx, dest, speed) => playPit(ctx, dest, speed)
+        },
+        {
+            id: 'pehpuuh', category: 'contact',
+            title: 'Péh-puuh Roep',
+            dutch: 'Sirene-achtige contactroep',
+            icon: '🚨',
+            phonetic: 'péh-puuh péh-puuh',
+            description: 'Opvallende tweelettergrepige contactroep met stijgend-dalend toonhoogteverloop. In het Nederlands vergeleken met een politiesirene. Wordt gebruikt voor communicatie binnen foerageergroepen.',
+            play: (ctx, dest, speed) => playPehPuuh(ctx, dest, speed)
+        },
+
+        // ═══ NEST & BROEDEN ═══
+        {
+            id: 'begging', category: 'nest',
+            title: 'Bedelroep',
+            dutch: 'Jonge vogels vragen om voedsel',
+            icon: '🐣',
+            phonetic: 'tsie-tsie-tsie-tsie',
+            description: 'Snelle, hoge trillende roep van jonge koolmezen die om voedsel vragen. Wordt intenser naarmate de honger groter is.',
+            play: (ctx, dest, speed) => playBegging(ctx, dest, speed)
+        },
+        {
+            id: 'fledgling', category: 'nest',
+            title: 'Uitgevlogen Jongenroep',
+            dutch: 'Contactroep jonge vogels',
+            icon: '🐥',
+            phonetic: 'zicker-zicker-zicker / zi-zi-zi',
+            description: 'Luide, hoge roep van recent uitgevlogen jongen om contact te houden met ouders. Herkenbaar aan combinatie met kenmerkend vleugeltrillen bij voederplaatsen.',
+            play: (ctx, dest, speed) => playFledgling(ctx, dest, speed)
+        },
+        {
+            id: 'hiss', category: 'nest',
+            title: 'Slangsissen',
+            dutch: 'Nestverdedigingsdisplay',
+            icon: '🐍',
+            phonetic: 'SSSSSHHH (explosief)',
+            description: 'Explosief sissend geluid dat lijkt op een slangenbeet. Het vrouwtje stoot haar kop naar voren als een aanvallende slang. Muizen spenderen 85% minder tijd in nestkastjes bij dit geluid.',
+            play: (ctx, dest, speed) => playHiss(ctx, dest, speed)
+        },
+        {
+            id: 'nestexchange', category: 'nest',
+            title: 'Nest-uitwisselingsroep',
+            dutch: 'Communicatie bij nestwissel',
+            icon: '🔄',
+            phonetic: '(verschoven spectrum roepen)',
+            description: 'Spectraal verschoven roepen tijdens vocale uitwisseling tussen man en vrouw bij het nest. Het vrouwtje signaleert haar behoefte aan voedsel; meer vocalisatie tijdens de legperiode dan incubatie.',
+            play: (ctx, dest, speed) => playNestExchange(ctx, dest, speed)
+        },
+        {
+            id: 'matesep', category: 'nest',
+            title: 'Partnerzoekroep',
+            dutch: 'Zachte zang van het vrouwtje',
+            icon: '💔',
+            phonetic: '(zachte imitatie van mannetjeszang)',
+            description: 'Zachte versie van de mannetjeszang, gezongen door het vrouwtje om haar partner te lokaliseren. Meestal gehoord als zij het nest verlaat na incubatie en het mannetje niet in de buurt is.',
+            play: (ctx, dest, speed) => playMateSeparation(ctx, dest, speed)
+        },
+
+        // ═══ VOEDSEL ═══
+        {
+            id: 'foodchirp', category: 'voedsel',
+            title: 'Voedselchirp',
+            dutch: 'Chirp bij voedselvondst',
+            icon: '🐛',
+            phonetic: 'chirp chirp chirp',
+            description: 'Korte, scherpe chirps die toenemen bij voedselvondsten. Het aandeel chirp-noten stijgt van ~9% bij mobbing naar ~16% bij voedsel, wat groepsgenoten informeert.',
+            play: (ctx, dest, speed) => playFoodChirp(ctx, dest, speed)
+        },
+
+        // ═══ MECHANISCHE GELUIDEN ═══
+        {
+            id: 'billsnap', category: 'mechanisch',
+            title: 'Snavelklappen',
+            dutch: 'Mechanisch dreiggeluid',
+            icon: '🫦',
+            phonetic: 'KLAK KLAK KLAK',
+            description: 'Scherpe, mechanische klappen geproduceerd door snelle snavelsluitingen. Onderdeel van het nestverdedigingsdisplay samen met sissen en vleugelslaan. Niet-vocaal geproduceerd.',
+            play: (ctx, dest, speed) => playBillSnap(ctx, dest, speed)
+        }
+    ];
+
+    // ── Synthesis helpers ──
+    function createChirp(ctx, freqStart, freqEnd, startTime, duration, dest, gainVal = 0.25) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freqStart, startTime);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 20), startTime + duration);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(gainVal, startTime + Math.min(0.008, duration * 0.15));
+        gain.gain.setValueAtTime(gainVal, startTime + duration - Math.min(0.015, duration * 0.2));
+        gain.gain.linearRampToValueAtTime(0, startTime + duration);
+        osc.connect(gain);
+        gain.connect(dest);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.01);
+        activeSources.push(osc);
+    }
+
+    function addHarmonic(ctx, baseFreq, harmonic, startTime, duration, dest, gainVal = 0.08) {
+        createChirp(ctx, baseFreq * harmonic, baseFreq * harmonic, startTime, duration, dest, gainVal);
+    }
+
+    function createNoise(ctx, startTime, duration, dest, gainVal = 0.1) {
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1);
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 4000;
+        filter.Q.value = 2;
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.005);
+        gain.gain.setValueAtTime(gainVal, startTime + duration - 0.01);
+        gain.gain.linearRampToValueAtTime(0, startTime + duration);
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(dest);
+        source.start(startTime);
+        source.stop(startTime + duration + 0.01);
+        activeSources.push(source);
+        return { filter, gain };
+    }
+
+    function createClick(ctx, startTime, dest, gainVal = 0.4) {
+        const bufferSize = Math.floor(ctx.sampleRate * 0.008);
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            const env = Math.exp(-i / (bufferSize * 0.1));
+            data[i] = (Math.random() * 2 - 1) * env;
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        const gain = ctx.createGain();
+        gain.gain.value = gainVal;
+        const hp = ctx.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 1500;
+        source.connect(hp);
+        hp.connect(gain);
+        gain.connect(dest);
+        source.start(startTime);
+        activeSources.push(source);
+    }
+
+    // ── Sound implementations ──
+
+    // 1. Teacher-teacher
+    function playTeacher(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const gap = 0.18 / speed;
+        const noteLen = 0.12 / speed;
+        const phraseGap = 0.4 / speed;
+        let totalDuration = 0;
+        for (let rep = 0; rep < 4; rep++) {
+            const offset = rep * (2 * noteLen + gap + phraseGap);
+            createChirp(ctx, 4200, 3800, t + offset, noteLen, dest, 0.25);
+            addHarmonic(ctx, 4000, 2, t + offset, noteLen, dest, 0.06);
+            createChirp(ctx, 3400, 3000, t + offset + noteLen + gap, noteLen, dest, 0.25);
+            addHarmonic(ctx, 3200, 2, t + offset + noteLen + gap, noteLen, dest, 0.06);
+            totalDuration = offset + 2 * noteLen + gap;
+        }
+        return totalDuration + 0.1;
+    }
+
+    // 2. Complex 3-syllable song
+    function playSongComplex(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const noteLen = 0.1 / speed;
+        const gap = 0.1 / speed;
+        const phraseGap = 0.45 / speed;
+        let offset = 0;
+        for (let rep = 0; rep < 3; rep++) {
+            createChirp(ctx, 4800, 4600, t + offset, noteLen * 0.7, dest, 0.22);
+            offset += noteLen * 0.7 + gap * 0.5;
+            createChirp(ctx, 4000, 3700, t + offset, noteLen * 0.8, dest, 0.25);
+            offset += noteLen * 0.8 + gap * 0.5;
+            createChirp(ctx, 3600, 2800, t + offset, noteLen * 1.4, dest, 0.25);
+            addHarmonic(ctx, 3200, 2, t + offset, noteLen * 1.4, dest, 0.05);
+            offset += noteLen * 1.4 + phraseGap;
+        }
+        return offset;
+    }
+
+    // 3. Saw-sharpening song
+    function playSawSong(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 3; rep++) {
+            // zi-zi-zi (fast high notes)
+            for (let i = 0; i < 3; i++) {
+                const dur = 0.06 / speed;
+                createChirp(ctx, 6200, 5800, t + offset, dur, dest, 0.22);
+                offset += dur + 0.04 / speed;
+            }
+            // bèh (lower ending note)
+            const endDur = 0.14 / speed;
+            createChirp(ctx, 3800, 2800, t + offset, endDur, dest, 0.28);
+            addHarmonic(ctx, 3300, 2, t + offset, endDur, dest, 0.06);
+            offset += endDur + 0.35 / speed;
+        }
+        return offset;
+    }
+
+    // 4. Pie-toe song
+    function playPietoe(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 4; rep++) {
+            const dur1 = 0.1 / speed;
+            const dur2 = 0.12 / speed;
+            // pie (rising)
+            createChirp(ctx, 3800, 4800, t + offset, dur1, dest, 0.24);
+            offset += dur1 + 0.06 / speed;
+            // toe (falling)
+            createChirp(ctx, 4600, 3200, t + offset, dur2, dest, 0.26);
+            addHarmonic(ctx, 3900, 2, t + offset, dur2, dest, 0.05);
+            offset += dur2 + 0.38 / speed;
+        }
+        return offset;
+    }
+
+    // 5. Subsong (whisper song)
+    function playSubsong(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        const phrases = [
+            [3200, 3800], [4500, 4100], [5000, 5400], [3600, 3200],
+            [4800, 5200], [3400, 2900], [5500, 5100], [4200, 4600],
+            [3000, 3500], [5800, 5200], [4000, 3600], [4400, 4900]
+        ];
+        for (let i = 0; i < phrases.length; i++) {
+            const dur = (0.05 + Math.random() * 0.08) / speed;
+            const gap = (0.04 + Math.random() * 0.1) / speed;
+            createChirp(ctx, phrases[i][0], phrases[i][1], t + offset, dur, dest, 0.06 + Math.random() * 0.04);
+            offset += dur + gap;
+        }
+        return offset;
+    }
+
+    // 6. Dawn chorus (fast teacher-teacher)
+    function playDawnChorus(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const noteLen = 0.07 / speed;
+        const gap = 0.08 / speed;
+        const phraseGap = 0.15 / speed;
+        let offset = 0;
+        for (let rep = 0; rep < 6; rep++) {
+            createChirp(ctx, 4400, 4000, t + offset, noteLen, dest, 0.28);
+            addHarmonic(ctx, 4200, 2, t + offset, noteLen, dest, 0.07);
+            offset += noteLen + gap;
+            createChirp(ctx, 3600, 3100, t + offset, noteLen, dest, 0.28);
+            addHarmonic(ctx, 3350, 2, t + offset, noteLen, dest, 0.07);
+            offset += noteLen + phraseGap;
+        }
+        return offset;
+    }
+
+    // 7. Courtship warble
+    function playCourtship(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        // Male: ziddle zeeeee
+        for (let rep = 0; rep < 2; rep++) {
+            // ziddle (warbling)
+            for (let i = 0; i < 4; i++) {
+                const dur = 0.04 / speed;
+                const f = 2800 + Math.sin(i * 4) * 400;
+                createChirp(ctx, f, f + 200, t + offset, dur, dest, 0.18);
+                offset += dur;
+            }
+            // zeeeee (sustained)
+            const zeeDur = 0.2 / speed;
+            createChirp(ctx, 2400, 2200, t + offset, zeeDur, dest, 0.2);
+            addHarmonic(ctx, 2300, 2, t + offset, zeeDur, dest, 0.06);
+            offset += zeeDur + 0.15 / speed;
+        }
+        // Female response: zrrree zrrree
+        for (let rep = 0; rep < 3; rep++) {
+            const dur = 0.12 / speed;
+            createChirp(ctx, 3200, 2800, t + offset, dur, dest, 0.15);
+            // buzz component
+            for (let h = 2; h <= 4; h++) {
+                createChirp(ctx, 3000 * h * 0.5, 2800 * h * 0.5, t + offset, dur * 0.6, dest, 0.03);
+            }
+            offset += dur + 0.08 / speed;
+        }
+        return offset;
+    }
+
+    // 8. Alarm (tink)
+    function playAlarm(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const gap = 0.22 / speed;
+        const noteLen = 0.06 / speed;
+        let totalDuration = 0;
+        for (let i = 0; i < 8; i++) {
+            const offset = i * gap;
+            createChirp(ctx, 5500, 4800, t + offset, noteLen, dest, 0.3);
+            createChirp(ctx, 5500 * 1.5, 4800 * 1.5, t + offset, noteLen * 0.7, dest, 0.05);
+            createChirp(ctx, 5500 * 2.2, 4800 * 2.2, t + offset, noteLen * 0.5, dest, 0.03);
+            totalDuration = offset + noteLen;
+        }
+        return totalDuration + 0.1;
+    }
+
+    // 9. Seet call
+    function playSeet(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const dur = 0.8 / speed;
+        createChirp(ctx, 8200, 8400, t, dur, dest, 0.12);
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(8300, t);
+        const vibrato = ctx.createOscillator();
+        const vibratoGain = ctx.createGain();
+        vibrato.frequency.value = 6;
+        vibratoGain.gain.value = 30;
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(osc2.frequency);
+        vibrato.start(t);
+        vibrato.stop(t + dur);
+        gain2.gain.setValueAtTime(0, t);
+        gain2.gain.linearRampToValueAtTime(0.1, t + 0.05);
+        gain2.gain.setValueAtTime(0.1, t + dur - 0.1);
+        gain2.gain.linearRampToValueAtTime(0, t + dur);
+        osc2.connect(gain2);
+        gain2.connect(dest);
+        osc2.start(t);
+        osc2.stop(t + dur + 0.01);
+        activeSources.push(osc2, vibrato);
+        return dur + 0.1;
+    }
+
+    // 10. Mobbing D-calls
+    function playMobbing(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let series = 0; series < 3; series++) {
+            // Introductory "tsee" or "pee"
+            createChirp(ctx, 7000, 6500, t + offset, 0.06 / speed, dest, 0.15);
+            offset += 0.1 / speed;
+            // D-elements: harsh repeated notes
+            const numD = 5 + Math.floor(Math.random() * 3);
+            for (let i = 0; i < numD; i++) {
+                const dur = 0.05 / speed;
+                createChirp(ctx, 4200, 3800, t + offset, dur, dest, 0.22);
+                createChirp(ctx, 4200 * 1.5, 3800 * 1.5, t + offset, dur * 0.5, dest, 0.06);
+                // Harsh broadband component
+                createChirp(ctx, 2100, 1900, t + offset, dur, dest, 0.1);
+                offset += dur + 0.04 / speed;
+            }
+            offset += 0.3 / speed;
+        }
+        return offset;
+    }
+
+    // 11. Churr/rattle
+    function playChurr(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 2; rep++) {
+            const rattleDur = 0.6 / speed;
+            const pulseRate = 30 * speed;
+            const numPulses = Math.floor(rattleDur * pulseRate);
+            for (let i = 0; i < numPulses; i++) {
+                const pulseDur = 0.015 / speed;
+                const pulseTime = t + offset + (i / pulseRate);
+                const freq = 3500 + (i / numPulses) * 1500; // rising
+                createChirp(ctx, freq, freq + 100, pulseTime, pulseDur, dest, 0.12 + (i / numPulses) * 0.1);
+                createChirp(ctx, freq * 0.5, freq * 0.5 + 50, pulseTime, pulseDur, dest, 0.05);
+            }
+            offset += rattleDur + 0.25 / speed;
+        }
+        return offset;
+    }
+
+    // 12. Scold call
+    function playScold(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 2; rep++) {
+            for (let j = 0; j < 2; j++) {
+                const dur = 0.08 / speed;
+                createChirp(ctx, 6000, 5200, t + offset, dur, dest, 0.2);
+                createChirp(ctx, 6000 * 1.3, 5200 * 1.3, t + offset, dur * 0.6, dest, 0.08);
+                createChirp(ctx, 3000, 2800, t + offset, dur, dest, 0.1);
+                offset += dur + 0.06 / speed;
+            }
+            for (let j = 0; j < 2; j++) {
+                const dur = 0.12 / speed;
+                createChirp(ctx, 3200, 2600, t + offset, dur, dest, 0.3);
+                createChirp(ctx, 3200 * 2, 2600 * 2, t + offset, dur, dest, 0.08);
+                createChirp(ctx, 1600, 1300, t + offset, dur, dest, 0.12);
+                offset += dur + 0.06 / speed;
+            }
+            offset += 0.2 / speed;
+        }
+        return offset;
+    }
+
+    // 13. Pee-tink
+    function playPeetink(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 5; rep++) {
+            // pee (thin high)
+            createChirp(ctx, 7500, 7200, t + offset, 0.08 / speed, dest, 0.15);
+            offset += 0.1 / speed;
+            // tink (metallic)
+            createChirp(ctx, 5500, 4800, t + offset, 0.05 / speed, dest, 0.28);
+            createChirp(ctx, 5500 * 1.5, 4800 * 1.5, t + offset, 0.03 / speed, dest, 0.06);
+            offset += 0.25 / speed;
+        }
+        return offset;
+    }
+
+    // 14. Jar/rattle (ground predator specific)
+    function playJar(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 3; rep++) {
+            const dur = 0.35 / speed;
+            const pulseRate = 25 * speed;
+            const numPulses = Math.floor(dur * pulseRate);
+            for (let i = 0; i < numPulses; i++) {
+                const pulseDur = 0.02 / speed;
+                const pulseTime = t + offset + (i / pulseRate);
+                // Harsher, lower than churr
+                createChirp(ctx, 2800, 2600, pulseTime, pulseDur, dest, 0.18);
+                createChirp(ctx, 2800 * 1.8, 2600 * 1.8, pulseTime, pulseDur * 0.6, dest, 0.06);
+            }
+            offset += dur + 0.3 / speed;
+        }
+        return offset;
+    }
+
+    // 15. Tsee-tsui
+    function plasTseeTsui(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 4; rep++) {
+            // tsee (thin high)
+            createChirp(ctx, 7800, 7200, t + offset, 0.08 / speed, dest, 0.14);
+            offset += 0.1 / speed;
+            // tsui (sharp falling)
+            createChirp(ctx, 6800, 5500, t + offset, 0.07 / speed, dest, 0.16);
+            offset += 0.28 / speed;
+        }
+        return offset;
+    }
+
+    // 16. Contact si-si
+    function playContact(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const noteLen = 0.1 / speed;
+        const gap = 0.15 / speed;
+        let totalDuration = 0;
+        for (let i = 0; i < 5; i++) {
+            const offset = i * (noteLen + gap);
+            const freqVar = 6800 + Math.sin(i * 1.5) * 400;
+            createChirp(ctx, freqVar, freqVar + 200, t + offset, noteLen, dest, 0.15);
+            totalDuration = offset + noteLen;
+        }
+        createChirp(ctx, 7200, 6200, t + totalDuration + gap, noteLen * 2, dest, 0.18);
+        return totalDuration + gap + noteLen * 2 + 0.1;
+    }
+
+    // 17. Flight call
+    function playFlight(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const noteLen = 0.035 / speed;
+        const gap = 0.18 / speed;
+        let offset = 0;
+        for (let i = 0; i < 6; i++) {
+            const fVar = 5800 + (Math.random() - 0.5) * 600;
+            createChirp(ctx, fVar, fVar - 400, t + offset, noteLen, dest, 0.15);
+            offset += noteLen + gap + (Math.random() - 0.5) * 0.04;
+        }
+        return offset;
+    }
+
+    // 18. Pit/spick contact notes
+    function playPit(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let i = 0; i < 8; i++) {
+            const dur = 0.025 / speed;
+            const freq = 4500 + (Math.random() - 0.5) * 800;
+            createChirp(ctx, freq, freq - 200, t + offset, dur, dest, 0.13);
+            offset += dur + (0.2 + Math.random() * 0.15) / speed;
+        }
+        return offset;
+    }
+
+    // 19. Péh-puuh
+    function playPehPuuh(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 4; rep++) {
+            // péh (rising)
+            createChirp(ctx, 3500, 4800, t + offset, 0.1 / speed, dest, 0.2);
+            offset += 0.12 / speed;
+            // puuh (falling, longer)
+            createChirp(ctx, 4600, 3000, t + offset, 0.15 / speed, dest, 0.22);
+            addHarmonic(ctx, 3800, 2, t + offset, 0.15 / speed, dest, 0.04);
+            offset += 0.4 / speed;
+        }
+        return offset;
+    }
+
+    // 20. Begging call
+    function playBegging(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        const noteLen = 0.04 / speed;
+        const gap = 0.05 / speed;
+        let offset = 0;
+        for (let burst = 0; burst < 3; burst++) {
+            for (let i = 0; i < 6; i++) {
+                const freq = 7500 + Math.sin(i * 3) * 500;
+                createChirp(ctx, freq, freq + 300, t + offset, noteLen, dest, 0.18);
+                offset += noteLen + gap;
+            }
+            offset += 0.12 / speed;
+        }
+        return offset;
+    }
+
+    // 21. Fledgling contact call
+    function playFledgling(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        // zicker-zicker-zicker pattern
+        for (let burst = 0; burst < 2; burst++) {
+            for (let i = 0; i < 4; i++) {
+                const dur = 0.06 / speed;
+                createChirp(ctx, 6500, 7200, t + offset, dur * 0.4, dest, 0.2);
+                createChirp(ctx, 7200, 6000, t + offset + dur * 0.4, dur * 0.6, dest, 0.2);
+                offset += dur + 0.05 / speed;
+            }
+            offset += 0.15 / speed;
+        }
+        // zi-zi-zi pattern
+        for (let i = 0; i < 5; i++) {
+            const dur = 0.04 / speed;
+            createChirp(ctx, 7800, 7400, t + offset, dur, dest, 0.18);
+            offset += dur + 0.06 / speed;
+        }
+        return offset;
+    }
+
+    // 22. Hissing display
+    function playHiss(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 3; rep++) {
+            // Explosive hiss - broadband noise burst
+            const hissDur = 0.18 / speed;
+            const { filter } = createNoise(ctx, t + offset, hissDur, dest, 0.25);
+            filter.frequency.value = 4500;
+            filter.Q.value = 0.5; // wide bandwidth
+            // Higher frequency component
+            createNoise(ctx, t + offset, hissDur * 0.7, dest, 0.08);
+            offset += hissDur + 0.08 / speed;
+            // Wing strike (percussive)
+            createClick(ctx, t + offset, dest, 0.35);
+            offset += 1.8 / speed;
+        }
+        return offset;
+    }
+
+    // 23. Nest exchange calls
+    function playNestExchange(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        // Female higher-spectrum calls
+        for (let i = 0; i < 3; i++) {
+            const dur = 0.07 / speed;
+            createChirp(ctx, 5800 + i * 200, 5400 + i * 200, t + offset, dur, dest, 0.14);
+            offset += dur + 0.06 / speed;
+        }
+        offset += 0.1 / speed;
+        // Male response - lower
+        for (let i = 0; i < 2; i++) {
+            const dur = 0.08 / speed;
+            createChirp(ctx, 4200, 3800, t + offset, dur, dest, 0.16);
+            offset += dur + 0.08 / speed;
+        }
+        offset += 0.1 / speed;
+        // Female again - faster (feeding urgency)
+        for (let i = 0; i < 5; i++) {
+            const dur = 0.05 / speed;
+            createChirp(ctx, 6200 + i * 100, 5800 + i * 100, t + offset, dur, dest, 0.16);
+            offset += dur + 0.04 / speed;
+        }
+        return offset;
+    }
+
+    // 24. Mate separation call (soft female song)
+    function playMateSeparation(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        // Soft version of male song, lower amplitude
+        for (let rep = 0; rep < 3; rep++) {
+            createChirp(ctx, 4000, 3600, t + offset, 0.1 / speed, dest, 0.08);
+            offset += 0.12 / speed;
+            createChirp(ctx, 3200, 2800, t + offset, 0.1 / speed, dest, 0.08);
+            offset += 0.1 / speed + 0.35 / speed;
+        }
+        return offset;
+    }
+
+    // 25. Food chirp
+    function playFoodChirp(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let i = 0; i < 10; i++) {
+            const dur = 0.03 / speed;
+            const freq = 5200 + (Math.random() - 0.5) * 1000;
+            createChirp(ctx, freq, freq + 400, t + offset, dur, dest, 0.16);
+            offset += dur + (0.08 + Math.random() * 0.12) / speed;
+        }
+        return offset;
+    }
+
+    // 26. Bill snapping
+    function playBillSnap(ctx, dest, speed = 1) {
+        const t = ctx.currentTime;
+        let offset = 0;
+        for (let rep = 0; rep < 6; rep++) {
+            createClick(ctx, t + offset, dest, 0.5);
+            offset += (0.15 + Math.random() * 0.1) / speed;
+        }
+        return offset;
+    }
+
+    // ── Stop all sounds ──
+    function stopAll() {
+        activeSources.forEach(s => {
+            try { s.stop(); } catch(e) {}
+        });
+        activeSources = [];
+        if (activeTimeout) {
+            clearTimeout(activeTimeout);
+            activeTimeout = null;
+        }
+        document.querySelectorAll('.sound-card').forEach(c => c.classList.remove('playing'));
+        document.querySelectorAll('.play-btn').forEach(b => {
+            b.classList.remove('active');
+            b.textContent = '\u25B6';
+        });
+    }
+
+    // ── Play a sound ──
+    function playSound(soundId) {
+        stopAll();
+        const ctx = getAudioContext();
+        const sound = sounds.find(s => s.id === soundId);
+        if (!sound) return;
+
+        const card = document.querySelector(`[data-sound="${soundId}"]`);
+        const btn = card.querySelector('.play-btn');
+        const slider = card.querySelector('.speed-slider');
+        const speed = parseFloat(slider.value);
+
+        card.classList.add('playing');
+        btn.classList.add('active');
+        btn.textContent = '\u23F9';
+
+        const duration = sound.play(ctx, analyser, speed);
+
+        activeTimeout = setTimeout(() => {
+            card.classList.remove('playing');
+            btn.classList.remove('active');
+            btn.textContent = '\u25B6';
+            activeSources = [];
+        }, duration * 1000 + 100);
+    }
+
+    // ── Filter ──
+    let activeFilter = 'all';
+
+    function setFilter(catId) {
+        activeFilter = catId;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.cat === catId);
+        });
+        document.querySelectorAll('.category-section').forEach(section => {
+            if (catId === 'all') {
+                section.style.display = '';
+            } else {
+                section.style.display = section.dataset.cat === catId ? '' : 'none';
+            }
+        });
+    }
+
+    // ── Build UI ──
+    function buildUI() {
+        // Build filter bar
+        const filterBar = document.getElementById('filterBar');
+        const allBtn = document.createElement('button');
+        allBtn.className = 'filter-btn active';
+        allBtn.dataset.cat = 'all';
+        allBtn.textContent = 'Alle geluiden';
+        allBtn.addEventListener('click', () => setFilter('all'));
+        filterBar.appendChild(allBtn);
+
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.dataset.cat = cat.id;
+            btn.textContent = `${cat.icon} ${cat.name}`;
+            btn.addEventListener('click', () => setFilter(cat.id));
+            filterBar.appendChild(btn);
+        });
+
+        // Build sound cards grouped by category
+        const container = document.getElementById('soundsContainer');
+        categories.forEach(cat => {
+            const catSounds = sounds.filter(s => s.category === cat.id);
+            if (catSounds.length === 0) return;
+
+            const section = document.createElement('div');
+            section.className = 'category-section';
+            section.dataset.cat = cat.id;
+
+            const heading = document.createElement('div');
+            heading.className = 'category-heading';
+            heading.innerHTML = `<span class="cat-icon">${cat.icon}</span> ${cat.name} <span class="cat-count">(${catSounds.length} geluiden)</span>`;
+            section.appendChild(heading);
+
+            const grid = document.createElement('div');
+            grid.className = 'sounds-grid';
+
+            catSounds.forEach(sound => {
+                const card = document.createElement('div');
+                card.className = 'sound-card';
+                card.dataset.sound = sound.id;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-icon">${sound.icon}</div>
+                        <div>
+                            <div class="card-title">${sound.title}</div>
+                            <div class="card-dutch">${sound.dutch}</div>
+                        </div>
+                    </div>
+                    <div class="card-description">${sound.description}</div>
+                    <div class="card-phonetic">${sound.phonetic}</div>
+                    <div class="controls">
+                        <button class="play-btn" title="Afspelen">\u25B6</button>
+                        <input type="range" class="speed-slider" min="0.5" max="2" step="0.1" value="1" title="Snelheid">
+                        <span class="speed-label">1.0\u00D7</span>
+                    </div>
+                `;
+
+                const btn = card.querySelector('.play-btn');
+                const slider = card.querySelector('.speed-slider');
+                const label = card.querySelector('.speed-label');
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (card.classList.contains('playing')) stopAll();
+                    else playSound(sound.id);
+                });
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.controls')) return;
+                    if (card.classList.contains('playing')) stopAll();
+                    else playSound(sound.id);
+                });
+
+                slider.addEventListener('input', () => {
+                    label.textContent = parseFloat(slider.value).toFixed(1) + '\u00D7';
+                });
+                slider.addEventListener('click', e => e.stopPropagation());
+
+                grid.appendChild(card);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        });
+    }
+
+    // ── Visualizer ──
+    function startVisualizer() {
+        const canvas = document.getElementById('visualizer');
+        const ctx2d = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = canvas.offsetHeight * 2;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function draw() {
+            requestAnimationFrame(draw);
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = canvas.offsetHeight * 2;
+
+            if (vizMode === 'waveform') {
+                analyser.getByteTimeDomainData(dataArray);
+                ctx2d.fillStyle = 'rgba(15, 30, 15, 0.3)';
+                ctx2d.fillRect(0, 0, canvas.width, canvas.height);
+                ctx2d.lineWidth = 2;
+                ctx2d.strokeStyle = '#6abf4b';
+                ctx2d.shadowColor = '#6abf4b';
+                ctx2d.shadowBlur = 4;
+                ctx2d.beginPath();
+                const sliceWidth = canvas.width / bufferLength;
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * canvas.height) / 2;
+                    if (i === 0) ctx2d.moveTo(x, y);
+                    else ctx2d.lineTo(x, y);
+                    x += sliceWidth;
+                }
+                ctx2d.lineTo(canvas.width, canvas.height / 2);
+                ctx2d.stroke();
+                ctx2d.shadowBlur = 0;
+            } else {
+                analyser.getByteFrequencyData(dataArray);
+                ctx2d.fillStyle = 'rgba(15, 30, 15, 0.4)';
+                ctx2d.fillRect(0, 0, canvas.width, canvas.height);
+                const barCount = 128;
+                const barWidth = canvas.width / barCount;
+                for (let i = 0; i < barCount; i++) {
+                    const val = dataArray[i * Math.floor(bufferLength / barCount)] / 255;
+                    const h = val * canvas.height;
+                    const hue = 90 + val * 40;
+                    ctx2d.fillStyle = `hsla(${hue}, 60%, ${40 + val * 30}%, ${0.6 + val * 0.4})`;
+                    ctx2d.fillRect(i * barWidth, canvas.height - h, barWidth - 1, h);
+                }
+            }
+        }
+        draw();
+    }
+
+    // ── Viz mode toggle ──
+    document.querySelectorAll('.viz-toggle button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            vizMode = btn.dataset.viz;
+            document.querySelectorAll('.viz-toggle button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // ── Init ──
+    buildUI();
+    </script>
+</body>
+</html>
