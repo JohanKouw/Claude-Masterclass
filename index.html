@@ -426,34 +426,27 @@
     </div>
 
     <script>
-    // ── Audio Context ──
-    let audioCtx = null;
-    let analyser = null;
+    // ── Audio ──
     let activeAudio = null; // currently playing <audio> element
     let vizMode = 'waveform';
+    let audioUnlocked = false;
 
-    // Map of sound id -> cached Audio element
-    const audioElements = {};
+    // Single reusable <audio> element (most reliable on Android)
+    const sharedAudio = document.createElement('audio');
+    sharedAudio.preload = 'auto';
+    document.body.appendChild(sharedAudio);
 
-    function initVisualizer() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 2048;
-            analyser.smoothingTimeConstant = 0.8;
-            analyser.connect(audioCtx.destination);
-            startVisualizer();
-        }
+    // Unlock audio on first user interaction (required on Android/iOS)
+    function unlockAudio() {
+        if (audioUnlocked) return;
+        sharedAudio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+        sharedAudio.play().then(() => {
+            sharedAudio.pause();
+            audioUnlocked = true;
+        }).catch(() => {});
     }
-
-    // ── Create and cache an <audio> element (plain HTML5, no Web Audio routing) ──
-    function getAudioElement(soundId, filename) {
-        if (audioElements[soundId]) return audioElements[soundId];
-        const audio = new Audio(`sounds/${filename}`);
-        audio.preload = 'auto';
-        audioElements[soundId] = audio;
-        return audio;
-    }
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+    document.addEventListener('click', unlockAudio, { once: true });
 
     // ── Categories ──
     const categories = [
@@ -648,11 +641,9 @@
         }
         currentRepeat = 0;
         totalRepeats = 1;
-        if (activeAudio) {
-            activeAudio.pause();
-            activeAudio.currentTime = 0;
-            activeAudio = null;
-        }
+        sharedAudio.pause();
+        sharedAudio.removeAttribute('src');
+        activeAudio = null;
         document.querySelectorAll('.sound-card').forEach(c => c.classList.remove('playing'));
         document.querySelectorAll('.play-btn').forEach(b => {
             b.classList.remove('active');
@@ -682,24 +673,22 @@
         btn.classList.add('active');
         btn.textContent = '\u23F9';
 
-        const audio = getAudioElement(soundId, sound.file);
-        activeAudio = audio;
+        activeAudio = sharedAudio;
 
         function playOnce() {
             currentRepeat++;
             if (totalRepeats > 1) {
                 counter.textContent = `${currentRepeat}/${totalRepeats}`;
             }
-            audio.playbackRate = speed;
-            audio.currentTime = 0;
+            sharedAudio.src = `sounds/${sound.file}`;
+            sharedAudio.playbackRate = speed;
+            sharedAudio.volume = 1.0;
 
-            audio.onended = () => {
-                if (activeAudio !== audio) return;
+            sharedAudio.onended = () => {
+                if (activeAudio !== sharedAudio) return;
                 if (currentRepeat < totalRepeats) {
-                    // Schedule next repeat after delay
                     repeatTimeout = setTimeout(playOnce, repeatDelay);
                 } else {
-                    // All repeats done
                     card.classList.remove('playing');
                     btn.classList.remove('active');
                     btn.textContent = '\u25B6';
@@ -708,7 +697,7 @@
                 }
             };
 
-            audio.play().catch(err => {
+            sharedAudio.play().catch(err => {
                 console.error(`Fout bij afspelen van ${sound.file}:`, err);
                 card.classList.remove('playing');
                 btn.classList.remove('active');
@@ -817,7 +806,7 @@
             canvas.width = canvas.offsetWidth * 2;
             canvas.height = canvas.offsetHeight * 2;
 
-            const isPlaying = activeAudio && !activeAudio.paused;
+            const isPlaying = !sharedAudio.paused && sharedAudio.src && !sharedAudio.ended;
             const t = performance.now() / 1000;
 
             if (vizMode === 'waveform') {
