@@ -720,43 +720,8 @@
         playOnce();
     }
 
-    // ── Filter ──
-    let activeFilter = 'all';
-
-    function setFilter(catId) {
-        activeFilter = catId;
-        document.querySelectorAll('.filter-btn').forEach(b => {
-            b.classList.toggle('active', b.dataset.cat === catId);
-        });
-        document.querySelectorAll('.category-section').forEach(section => {
-            if (catId === 'all') {
-                section.style.display = '';
-            } else {
-                section.style.display = section.dataset.cat === catId ? '' : 'none';
-            }
-        });
-    }
-
     // ── Build UI ──
     function buildUI() {
-        // Build filter bar
-        const filterBar = document.getElementById('filterBar');
-        const allBtn = document.createElement('button');
-        allBtn.className = 'filter-btn active';
-        allBtn.dataset.cat = 'all';
-        allBtn.textContent = 'Alle geluiden';
-        allBtn.addEventListener('click', () => setFilter('all'));
-        filterBar.appendChild(allBtn);
-
-        categories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'filter-btn';
-            btn.dataset.cat = cat.id;
-            btn.innerHTML = `${cat.icon} ${cat.name}`;
-            btn.addEventListener('click', () => setFilter(cat.id));
-            filterBar.appendChild(btn);
-        });
-
         // Build sound cards grouped by category
         const container = document.getElementById('soundsContainer');
         categories.forEach(cat => {
