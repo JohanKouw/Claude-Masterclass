@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Read(//c/Users/johan/Desktop/Claude Masterclass/**)",
+      "Bash(gh auth:*)",
+      "Bash(winget install:*)",
+      "Bash(export PATH=\"/c/Program Files/GitHub CLI:$PATH\")",
+      "Bash(gh repo:*)",
+      "Bash(gh pr:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python convert_sounds.py)"
+    ]
+  }
+}
