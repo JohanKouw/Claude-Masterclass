@@ -36,21 +36,15 @@
         }
 
         header {
-            text-align: center;
+            text-align: left;
             margin-bottom: 1rem;
         }
 
         header h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #c8e6a0;
-            margin-bottom: 0.3rem;
-        }
-
-        header .subtitle {
-            font-size: 1rem;
-            color: #8bab6e;
-            font-style: italic;
+            margin-bottom: 0;
         }
 
         .bird-icon {
@@ -393,14 +387,401 @@
         }
 
         footer a { color: #6abf4b; text-decoration: none; }
+
+        /* Settings menu */
+        .settings-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #8bab6e;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: #c8e6a0;
+        }
+
+        .settings-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .settings-overlay.open { display: flex; }
+
+        .settings-panel {
+            background: linear-gradient(135deg, #1a3a1a, #2d5a27);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #e8f0e8;
+        }
+
+        .settings-panel h2 {
+            font-size: 1.3rem;
+            color: #c8e6a0;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            color: #8bab6e;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .settings-close:hover { color: #c8e6a0; }
+
+        .settings-section {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .settings-section h3 {
+            font-size: 0.95rem;
+            color: #c8e6a0;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-section p {
+            font-size: 0.8rem;
+            color: #9ab88a;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+        }
+
+        .settings-btn-action {
+            display: inline-block;
+            background: rgba(106,191,75,0.2);
+            border: 1px solid #6abf4b;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            color: #c8e6a0;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .settings-btn-action:hover {
+            background: rgba(106,191,75,0.35);
+        }
+
+        .upload-status {
+            font-size: 0.75rem;
+            color: #6abf4b;
+            margin-top: 0.5rem;
+            min-height: 1.2em;
+        }
+
+        .file-list {
+            font-size: 0.7rem;
+            color: #8bab6e;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+        }
+        .file-list .replaced { color: #6abf4b; }
+        .file-list .new-file { color: #e6c84a; }
+        .file-list .error { color: #e66a4a; }
+
+        /* Help button */
+        .help-btn {
+            position: fixed;
+            top: 1rem;
+            right: 3.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #8bab6e;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .help-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: #c8e6a0;
+        }
+
+        .help-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .help-overlay.open { display: flex; }
+
+        .help-panel {
+            background: linear-gradient(135deg, #1a3a1a, #2d5a27);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            color: #e8f0e8;
+        }
+
+        .help-panel h2 {
+            font-size: 1.3rem;
+            color: #c8e6a0;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .help-section {
+            margin-bottom: 1.2rem;
+        }
+
+        .help-section h3 {
+            font-size: 0.95rem;
+            color: #c8e6a0;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .help-section p, .help-section li {
+            font-size: 0.8rem;
+            color: #9ab88a;
+            line-height: 1.6;
+        }
+
+        .help-section ul {
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+
+        .help-section li {
+            margin-bottom: 0.3rem;
+        }
+
+        .help-section code {
+            background: rgba(255,255,255,0.08);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: #c8e6a0;
+            font-size: 0.78rem;
+        }
+
+        .help-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 1rem 0;
+        }
+
+        .help-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+        .help-table th {
+            text-align: left;
+            color: #c8e6a0;
+            padding: 0.3rem 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .help-table td {
+            color: #9ab88a;
+            padding: 0.3rem 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
     </style>
 </head>
 <body>
+    <button class="help-btn" id="helpBtn" title="Gebruiksaanwijzing">?</button>
+    <button class="settings-btn" id="settingsBtn" title="Instellingen">&#x2699;&#xFE0F;</button>
+
+    <div class="help-overlay" id="helpOverlay">
+        <div class="help-panel">
+            <h2>Gebruiksaanwijzing <button class="settings-close" id="helpClose">&times;</button></h2>
+
+            <div class="help-section">
+                <h3>&#x1F3B5; Geluid afspelen</h3>
+                <ul>
+                    <li>Klik op een <strong>geluidskaart</strong> of op de <strong>&#x25B6; play-knop</strong> om een geluid af te spelen.</li>
+                    <li>Klik nogmaals of op <strong>&#x23F9;</strong> om te stoppen.</li>
+                    <li>Er kan maar &eacute;&eacute;n geluid tegelijk worden afgespeeld.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>&#x23E9; Snelheid aanpassen</h3>
+                <ul>
+                    <li>Gebruik de <strong>schuifregelaar</strong> op elke kaart om de afspeelsnelheid in te stellen.</li>
+                    <li>Bereik: <strong>0.5&times;</strong> (half zo snel) tot <strong>2.0&times;</strong> (dubbel zo snel).</li>
+                    <li>Handig om subtiele details in vogelgeluiden te horen.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>&#x1F501; Herhalen &amp; delay</h3>
+                <ul>
+                    <li><strong>Herhaal:</strong> Stel in hoe vaak het geluid achter elkaar wordt afgespeeld (1&ndash;50).</li>
+                    <li><strong>Delay:</strong> Stel de pauze tussen herhalingen in, in stappen van 100 ms (0&ndash;5000 ms).</li>
+                    <li>De teller toont <code>2/5</code> = herhaling 2 van 5.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>&#x1F4CA; Audiovisualisatie</h3>
+                <ul>
+                    <li>Bovenaan zie je een realtime visualisatie van het geluid dat wordt afgespeeld.</li>
+                    <li>Wissel tussen <strong>Golfvorm</strong> (tijddomein) en <strong>Frequentie</strong> (frequentiespectrum) met de knoppen.</li>
+                </ul>
+            </div>
+
+            <hr class="help-divider">
+
+            <div class="help-section">
+                <h3>&#x1F4C1; Eigen geluiden gebruiken</h3>
+                <p>Je kunt de standaard geluiden vervangen door je eigen opnames:</p>
+                <ul>
+                    <li>Klik op <strong>&#x2699;&#xFE0F; Instellingen</strong> (rechtsboven).</li>
+                    <li>Klik op <strong>"WAV bestanden kiezen"</strong> en selecteer je eigen .wav bestanden.</li>
+                    <li>De bestandsnamen moeten overeenkomen met de onderstaande tabel.</li>
+                    <li>Je geluiden worden direct geladen &mdash; geen herstart nodig.</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h3>&#x1F4BE; Wijzigingen opslaan</h3>
+                <ul>
+                    <li>Ge&uuml;ploade geluiden gaan verloren bij het sluiten van de pagina.</li>
+                    <li>Om ze permanent op te slaan: ga naar <strong>Instellingen</strong> &rarr; <strong>"sounds_data.js opslaan naast index.html"</strong>. Er opent een "Opslaan als" venster &mdash; navigeer naar de map waar <code>index.html</code> staat en sla op.</li>
+                    <li><strong>Alternatief:</strong> Gebruik <strong>"sounds_data.js downloaden naar Downloads"</strong> en verplaats het bestand handmatig.</li>
+                    <li><strong>Via terminal:</strong> Plaats .wav bestanden in de <code>sounds/</code> map en draai <code>python convert_sounds.py</code>.</li>
+                </ul>
+            </div>
+
+            <hr class="help-divider">
+
+            <div class="help-section">
+                <h3>&#x1F4BB; convert_sounds.py gebruiken</h3>
+                <p><strong>Windows:</strong> Open Command Prompt of PowerShell en typ:</p>
+                <ul>
+                    <li><code>cd pad\naar\de\map</code> (de map waar <code>convert_sounds.py</code> staat)</li>
+                    <li><code>python convert_sounds.py</code></li>
+                    <li>Werkt <code>python</code> niet? Probeer <code>python3</code> of <code>py</code>.</li>
+                    <li>Python moet ge&iuml;nstalleerd zijn. Download via <a href="https://www.python.org/downloads/" target="_blank" style="color:#6abf4b;">python.org</a>.</li>
+                </ul>
+                <p style="margin-top:0.6rem;"><strong>Android:</strong> Python is niet standaard beschikbaar op Android. Gebruik in plaats daarvan de ingebouwde functie in de app:</p>
+                <ul>
+                    <li>Tik op <strong>&#x2699;&#xFE0F; Instellingen</strong> (rechtsboven)</li>
+                    <li>Tik op <strong>"WAV bestanden kiezen"</strong> en selecteer je opnames</li>
+                    <li>Tik op <strong>"sounds_data.js opslaan naast index.html"</strong></li>
+                </ul>
+                <p>Dit doet exact hetzelfde als het Python script, maar dan vanuit de browser.</p>
+            </div>
+
+            <hr class="help-divider">
+
+            <div class="help-section">
+                <h3>&#x1F4CB; Bestandsnamen</h3>
+                <table class="help-table">
+                    <tr><th>#</th><th>Bestandsnaam</th><th>Geluid</th></tr>
+                    <tr><td>01</td><td><code>01_teacher.wav</code></td><td>Territoriumzang</td></tr>
+                    <tr><td>02</td><td><code>02_song_complex.wav</code></td><td>Complexe zang</td></tr>
+                    <tr><td>03</td><td><code>03_saw_song.wav</code></td><td>Zaagzang</td></tr>
+                    <tr><td>04</td><td><code>04_pietoe.wav</code></td><td>Pie-toe zang</td></tr>
+                    <tr><td>05</td><td><code>05_subsong.wav</code></td><td>Onderzang</td></tr>
+                    <tr><td>06</td><td><code>06_dawn_chorus.wav</code></td><td>Ochtendkoorzang</td></tr>
+                    <tr><td>07</td><td><code>07_courtship.wav</code></td><td>Baltszang</td></tr>
+                    <tr><td>08</td><td><code>08_alarm.wav</code></td><td>Tink-alarmroep</td></tr>
+                    <tr><td>09</td><td><code>09_seet.wav</code></td><td>Seet-roep</td></tr>
+                    <tr><td>10</td><td><code>10_mobbing.wav</code></td><td>Mobbing / D-roep</td></tr>
+                    <tr><td>11</td><td><code>11_churr.wav</code></td><td>Tsjurr / ratel</td></tr>
+                    <tr><td>12</td><td><code>12_scold.wav</code></td><td>Scheldroep</td></tr>
+                    <tr><td>13</td><td><code>13_peetink.wav</code></td><td>Pee-tink roep</td></tr>
+                    <tr><td>14</td><td><code>14_jar.wav</code></td><td>Jar / ratelroep</td></tr>
+                    <tr><td>15</td><td><code>15_tsee_tsui.wav</code></td><td>Tsee-tsui roep</td></tr>
+                    <tr><td>16</td><td><code>16_contact.wav</code></td><td>Si-si contactroep</td></tr>
+                    <tr><td>17</td><td><code>17_flight.wav</code></td><td>Vluchtroep</td></tr>
+                    <tr><td>18</td><td><code>18_pit.wav</code></td><td>Pit / spick</td></tr>
+                    <tr><td>19</td><td><code>19_peh_puuh.wav</code></td><td>P&eacute;h-puuh roep</td></tr>
+                    <tr><td>20</td><td><code>20_begging.wav</code></td><td>Bedelroep</td></tr>
+                    <tr><td>21</td><td><code>21_fledgling.wav</code></td><td>Uitgevlogen jongenroep</td></tr>
+                    <tr><td>22</td><td><code>22_hiss.wav</code></td><td>Slangsissen</td></tr>
+                    <tr><td>23</td><td><code>23_nest_exchange.wav</code></td><td>Nest-uitwisseling</td></tr>
+                    <tr><td>24</td><td><code>24_mate_separation.wav</code></td><td>Partnerzoekroep</td></tr>
+                    <tr><td>25</td><td><code>25_food_chirp.wav</code></td><td>Voedselchirp</td></tr>
+                    <tr><td>26</td><td><code>26_bill_snap.wav</code></td><td>Snavelklappen</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-panel">
+            <h2>Instellingen <button class="settings-close" id="settingsClose">&times;</button></h2>
+
+            <div class="settings-section">
+                <h3>Eigen geluiden uploaden</h3>
+                <p>Vervang de standaard geluiden door je eigen opnames. Selecteer .wav bestanden met dezelfde bestandsnamen (bijv. <code>01_teacher.wav</code>). De geluiden worden direct in de app geladen.</p>
+                <input type="file" id="wavUpload" multiple accept=".wav" style="display:none">
+                <button class="settings-btn-action" id="uploadBtn">WAV bestanden kiezen</button>
+                <div class="upload-status" id="uploadStatus"></div>
+                <div class="file-list" id="uploadFileList"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3>sounds_data.js opslaan</h3>
+                <p>Sla de huidige geluiden (incl. uploads) op als <code>sounds_data.js</code> naast <code>index.html</code> om je wijzigingen permanent te bewaren.</p>
+                <button class="settings-btn-action" id="saveDataBtn">sounds_data.js opslaan naast index.html</button>
+                <button class="settings-btn-action" id="downloadDataBtn">sounds_data.js downloaden naar Downloads</button>
+                <div class="upload-status" id="saveStatus"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Python script (alternatief)</h3>
+                <p>Je kunt ook <code>convert_sounds.py</code> gebruiken om WAV bestanden om te zetten. Plaats je .wav bestanden in de <code>sounds/</code> map en draai:</p>
+                <p><code style="color:#c8e6a0;">python convert_sounds.py</code></p>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="sticky-top">
             <header>
                 <h1>Koolmees Geluiden</h1>
-                <div class="subtitle">Parus major — Volledig Vocaal Repertoire</div>
             </header>
 
             <div class="visualizer-container">
@@ -954,6 +1335,120 @@ const SOUND_DATA = {
             document.querySelectorAll('.viz-toggle button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         });
+    });
+
+    // ── Settings menu ──
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const settingsClose = document.getElementById('settingsClose');
+    const wavUpload = document.getElementById('wavUpload');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadFileList = document.getElementById('uploadFileList');
+    const downloadDataBtn = document.getElementById('downloadDataBtn');
+
+    const helpBtn = document.getElementById('helpBtn');
+    const helpOverlay = document.getElementById('helpOverlay');
+    const helpClose = document.getElementById('helpClose');
+    helpBtn.addEventListener('click', () => helpOverlay.classList.add('open'));
+    helpClose.addEventListener('click', () => helpOverlay.classList.remove('open'));
+    helpOverlay.addEventListener('click', (e) => {
+        if (e.target === helpOverlay) helpOverlay.classList.remove('open');
+    });
+
+    settingsBtn.addEventListener('click', () => settingsOverlay.classList.add('open'));
+    settingsClose.addEventListener('click', () => settingsOverlay.classList.remove('open'));
+    settingsOverlay.addEventListener('click', (e) => {
+        if (e.target === settingsOverlay) settingsOverlay.classList.remove('open');
+    });
+
+    uploadBtn.addEventListener('click', () => wavUpload.click());
+
+    wavUpload.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+
+        const validNames = sounds.map(s => s.file);
+        uploadStatus.textContent = `${files.length} bestand(en) verwerken...`;
+        uploadFileList.innerHTML = '';
+
+        let replaced = 0;
+        for (const file of files) {
+            const li = document.createElement('div');
+            if (validNames.includes(file.name)) {
+                // Read file as base64 and update SOUND_DATA
+                const b64 = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
+                SOUND_DATA[file.name] = b64;
+                // Clear caches so new data is used
+                delete blobUrlCache[file.name];
+                delete pcmCache[file.name];
+                // Pre-create new Blob URL
+                getBlobUrl(file.name);
+                li.className = 'replaced';
+                li.textContent = `\u2713 ${file.name} — vervangen`;
+                replaced++;
+            } else {
+                li.className = 'error';
+                li.textContent = `\u2717 ${file.name} — onbekende naam (overgeslagen)`;
+            }
+            uploadFileList.appendChild(li);
+        }
+
+        uploadStatus.textContent = `${replaced} geluid(en) vervangen. Klik op een play-knop om te testen.`;
+        wavUpload.value = '';
+    });
+
+    function buildSoundsDataJS() {
+        let js = 'const SOUND_DATA = {\n';
+        const keys = Object.keys(SOUND_DATA);
+        keys.forEach((key, i) => {
+            const comma = i < keys.length - 1 ? ',' : '';
+            js += `"${key}": "${SOUND_DATA[key]}"${comma}\n`;
+        });
+        js += '};\n';
+        return js;
+    }
+
+    const saveDataBtn = document.getElementById('saveDataBtn');
+    const saveStatus = document.getElementById('saveStatus');
+
+    saveDataBtn.addEventListener('click', async () => {
+        const js = buildSoundsDataJS();
+        const blob = new Blob([js], { type: 'application/javascript' });
+
+        if (window.showSaveFilePicker) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: 'sounds_data.js',
+                    types: [{ description: 'JavaScript', accept: { 'application/javascript': ['.js'] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                saveStatus.textContent = 'sounds_data.js is opgeslagen!';
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    saveStatus.textContent = 'Opslaan mislukt: ' + err.message;
+                }
+            }
+        } else {
+            saveStatus.textContent = 'Je browser ondersteunt direct opslaan niet. Gebruik de download-knop.';
+        }
+    });
+
+    downloadDataBtn.addEventListener('click', () => {
+        const js = buildSoundsDataJS();
+        const blob = new Blob([js], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sounds_data.js';
+        a.click();
+        URL.revokeObjectURL(url);
     });
 
     // ── Init ──
